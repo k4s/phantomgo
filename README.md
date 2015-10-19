@@ -6,12 +6,8 @@ package main
 import (
 	"fmt"
 	"github.com/k4s/phantomgo"
-
-	//	"io"
 	"io/ioutil"
 	"os"
-	// "log"
-	// "os/exec"
 )
 
 func main() {
