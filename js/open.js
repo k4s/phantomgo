@@ -1,7 +1,7 @@
 //system 用于
 var system = require('system');
 var page = require('webpage').create();
-// console.log(system.args[0],system.args[1],system.args[2])
+console.log(system.args[0],system.args[1],system.args[2])
 page.settings.userAgent = 'Mozilla/5.0+(compatible;+Baiduspider/2.0;++http://www.baidu.com/search/spider.html)';
 if(system.args.length ==1){
 	phantom.exit();
