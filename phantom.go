@@ -16,6 +16,7 @@ type Phantomer interface {
 	SetUserAgent(string)
 	SetPhantomjsPath(string, string)
 	Start(args []string) (io.ReadCloser, error)
+	Exec(string) (io.ReadCloser, error)
 }
 
 type Phantom struct {
@@ -90,9 +91,21 @@ func (self *Phantom) Open(openArgs ...string) (stdout io.ReadCloser, err error) 
 	return stdout, err
 }
 
-//预留方法
+//动态执行js
 func (self *Phantom) Exec(js string) (stdout io.ReadCloser, err error) {
+	file, _ := os.Create(self.jsFileName)
+	file.WriteString(js)
+	cmd := exec.Command(self.phantomjsPath, self.jsFileName)
+	stdout, err = cmd.StdoutPipe()
+	if err != nil {
+		return nil, err
+	}
+	err = cmd.Start()
+	if err != nil {
+		return nil, err
+	}
 	return stdout, err
+
 }
 
 //设置本地代理客户端
@@ -108,13 +121,8 @@ func (self *Phantom) SetPhantomjsPath(name string, filepath string) {
 //创建js临时文件
 func (self *Phantom) CreatJsFile() {
 	js := loadjs()
-	_, err := os.Stat(self.jsFileName)
-	if err == nil || os.IsExist(err) {
-		return
-	} else {
-		file, _ := os.Create(self.jsFileName)
-		file.WriteString(js)
-	}
+	file, _ := os.Create(self.jsFileName)
+	file.WriteString(js)
 
 }
 
