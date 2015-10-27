@@ -16,7 +16,7 @@ type Phantomer interface {
 	SetUserAgent(string)
 	SetPhantomjsPath(string, string)
 	Start(args []string) (io.ReadCloser, error)
-	Exec(string) (io.ReadCloser, error)
+	Exec(string, ...string) (io.ReadCloser, error)
 }
 
 type Phantom struct {
@@ -92,10 +92,14 @@ func (self *Phantom) Open(openArgs ...string) (stdout io.ReadCloser, err error) 
 }
 
 //动态执行js
-func (self *Phantom) Exec(js string) (stdout io.ReadCloser, err error) {
+//js为执行代码，args为命令行参数
+func (self *Phantom) Exec(js string, args ...string) (stdout io.ReadCloser, err error) {
 	file, _ := os.Create(self.jsFileName)
 	file.WriteString(js)
-	cmd := exec.Command(self.phantomjsPath, self.jsFileName)
+	file.Close()
+	var exeCommand []string
+	exeCommand = append(append(exeCommand, self.jsFileName), args...)
+	cmd := exec.Command(self.phantomjsPath, exeCommand...)
 	stdout, err = cmd.StdoutPipe()
 	if err != nil {
 		return nil, err
