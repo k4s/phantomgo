@@ -1,5 +1,7 @@
 # phantomgo
 a headless browser phantomjs for golang
+
+可打开需要加载js，或者防御爬虫的网站
 ```
 package main
 
@@ -16,7 +18,7 @@ func main() {
 	fmt.Println(string(output))
 }
 ```
-动态执行JavaScript
+可动态执行phantomjs提供的JavaScript接口
 ```
 package main
 
