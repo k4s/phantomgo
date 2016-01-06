@@ -1,22 +1,34 @@
 # phantomgo
 a headless browser phantomjs for golang
 
-可打开需要加载js，或者防御爬虫的网站
+全新的框架,更容易使用,更容易嵌套到自己的下载器
+eg:[http://www.github.com/k4s/webrowser](http://www.github.com/k4s/webrowser)
 ```
-package main
-
 import (
 	"fmt"
-	"github.com/k4s/phantomgo"
 	"io/ioutil"
+	"net/http"
+
+	. "github.com/k4s/phantomgo"
 )
 
 func main() {
-	p := phantomgo.NewPhantom()
-	res, _ := p.Start([]string{"open", "http://weibo.com"})
-	output, _ := ioutil.ReadAll(res)
-	fmt.Println(string(output))
+	p := &Param{
+		Method: "POST",  //有POST，GET方法
+		Url:    "http://localhost/go_test/1.php",
+		Header:       http.Header{"Cookie": []string{"your cookies"}},
+		UsePhontomJS: true,
+		PostBody:     "aaa=111",
+	}
+	brower := NewPhantom()
+	resp, err := brower.Download(p)
+	if err != nil {
+		fmt.Println(err)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	fmt.Println(string(body))
 }
+
 ```
 可动态执行phantomjs提供的JavaScript接口
 ```
@@ -40,6 +52,7 @@ func main() {
 	fmt.Println(string(output))
 	
 }
+
 ```
 
 模拟登录，新浪微博轻松抓数据
