@@ -17,7 +17,7 @@ func main() {
 		Method: "POST",  //有POST，GET方法
 		Url:    "http://localhost/go_test/1.php",
 		Header:       http.Header{"Cookie": []string{"your cookies"}},
-		UsePhontomJS: true,
+		UsePhantomJS: true,
 		PostBody:     "aaa=111",
 	}
 	brower := NewPhantom()

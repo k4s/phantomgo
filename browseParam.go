@@ -16,7 +16,7 @@ type Request interface {
 	GetConnTimeout() time.Duration
 	GetRetryPause() time.Duration
 	GetTryTimes() int
-	GetusePhomtomJS() bool
+	GetusePhantomJS() bool
 }
 
 //供外部调用
@@ -30,7 +30,7 @@ type Param struct {
 	ConnTimeout   time.Duration //链接超时时间
 	RetryPause    time.Duration //请求失败时重复试时间段
 	TryTimes      int           //请求失败重新请求次数
-	UsePhontomJS  bool
+	UsePhantomJS  bool
 }
 
 func (self *Param) GetMethod() string {
@@ -61,6 +61,6 @@ func (self *Param) GetRetryPause() time.Duration {
 func (self *Param) GetTryTimes() int {
 	return self.TryTimes
 }
-func (self *Param) GetusePhomtomJS() bool {
-	return self.UsePhontomJS
+func (self *Param) GetusePhantomJS() bool {
+	return self.UsePhantomJS
 }
