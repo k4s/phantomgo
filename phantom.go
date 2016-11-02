@@ -2,6 +2,7 @@ package phantomgo
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -19,6 +20,9 @@ var GOPATH = os.Getenv("GOPATH")
 
 type Phantomer interface {
 	SetUserAgent(string)
+	SetProxy(string)
+	SetProxyType(string)
+	SetProxyAuth(string)
 	SetPhantomjsPath(string, string)
 	Download(Request) (*http.Response, error)
 	Exec(string, ...string) (io.ReadCloser, error)
@@ -28,6 +32,9 @@ type Phantom struct {
 	userAgent     string
 	pageEncode    string
 	phantomjsPath string
+	proxy         string
+	proxyType     string
+	proxyAuth     string
 	WebrowseParam
 }
 
@@ -92,8 +99,21 @@ func (self *Phantom) Download(req Request) (resp *http.Response, err error) {
 	var pagebody io.ReadCloser
 	resp = new(http.Response)
 
+	proxy, proxyType, proxyAuth := "", "", ""
+	if self.proxy != "" {
+		proxy = fmt.Sprintf("--proxy=%s ", self.proxy)
+	}
+
+	if self.proxyType != "" {
+		proxyType = fmt.Sprintf("--proxy-type=%s ", self.proxyType)
+	}
+
+	if self.proxyAuth != "" {
+		proxyAuth += fmt.Sprintf("--proxy-auth=%s ", self.proxyAuth)
+	}
+
 	if self.method == "GET" {
-		pagebody, err = self.Open(GET_JS_FILE_NAME, self.url, self.cookie, self.pageEncode, self.userAgent)
+		pagebody, err = self.Open(proxy, proxyType, proxyAuth, GET_JS_FILE_NAME, self.url, self.cookie, self.pageEncode, self.userAgent)
 		if err != nil {
 			return nil, err
 		}
@@ -102,7 +122,7 @@ func (self *Phantom) Download(req Request) (resp *http.Response, err error) {
 		resp.Body = pagebody
 		return
 	} else if self.method == "POST" {
-		pagebody, err = self.Open(POST_JS_FILE_NAME, self.url, self.cookie, self.pageEncode, self.userAgent, self.postBody)
+		pagebody, err = self.Open(proxy, proxyType, proxyAuth, POST_JS_FILE_NAME, self.url, self.cookie, self.pageEncode, self.userAgent, self.postBody)
 		if err != nil {
 			return nil, err
 		}
@@ -151,6 +171,21 @@ func (self *Phantom) Exec(js string, args ...string) (stdout io.ReadCloser, err 
 //设置本地代理客户端
 func (self *Phantom) SetUserAgent(userAgent string) {
 	self.userAgent = userAgent
+}
+
+//SetProxy for example address:port
+func (self *Phantom) SetProxy(proxy string) {
+	self.proxy = proxy
+}
+
+//SetProxyType for example [http|socks5|none]
+func (self *Phantom) SetProxyType(proxyType string) {
+	self.proxyType = proxyType
+}
+
+//SetProxyAuth for example username:password
+func (self *Phantom) SetProxyAuth(proxyAuth string) {
+	self.proxyAuth = proxyAuth
 }
 
 //设置页面编码
