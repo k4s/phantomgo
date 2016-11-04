@@ -38,17 +38,17 @@ type Phantom struct {
 	WebrowseParam
 }
 
-//浏览器参数
+//web browse param
 type WebrowseParam struct {
 	method      string
 	url         string
 	header      http.Header
 	cookie      string
 	postBody    string
-	dialTimeout time.Duration //拨号超时时间段
-	connTimeout time.Duration //链接超时时间
-	tryTimes    int           //请求失败重新请求次数
-	retryPause  time.Duration //请求失败时重复试时间段
+	dialTimeout time.Duration
+	connTimeout time.Duration
+	tryTimes    int           //if request failed,retry times
+	retryPause  time.Duration //if request failed,retry time
 }
 
 func NewPhantom() Phantomer {
@@ -57,7 +57,7 @@ func NewPhantom() Phantomer {
 		pageEncode:    "utf-8",
 		phantomjsPath: GOPATH + "/src/github.com/k4s/phantomgo/phantomjs/phantomjs",
 	}
-	//如果js文件不存在,则创建文件
+	//if the javascript file is no exist,creat it
 	if !phantom.Exist(GET_JS_FILE_NAME) {
 		phantom.CreatJsFile("GET")
 	}
@@ -69,24 +69,22 @@ func NewPhantom() Phantomer {
 
 func (self *Phantom) Download(req Request) (resp *http.Response, err error) {
 
-	//请求方法
+	//request method
 	self.method = strings.ToUpper(req.GetMethod())
-	//请求地址
+	//request address
 	self.url = req.GetUrl()
-	//请求http头
+	//request http header
 	self.header = req.GetHeader()
 	//postDATA
 	self.postBody = req.GetPostBody()
-	//请求尝试次数
+	//retry times
 	self.tryTimes = req.GetTryTimes()
-	//拨号超时时间
-	self.dialTimeout = req.GetDialTimeout()
-	//链接超时时间
-	self.connTimeout = req.GetConnTimeout()
-	//请求失败重新尝试的间隔时间
+	//if request failed,retry time
 	self.retryPause = req.GetRetryPause()
+	self.dialTimeout = req.GetDialTimeout()
+	self.connTimeout = req.GetConnTimeout()
 
-	//请求的cookie
+	//set cookie
 	for k, v := range self.header {
 		if k == "Cookie" || k == "cookie" {
 			for _, vv := range v {
@@ -134,7 +132,7 @@ func (self *Phantom) Download(req Request) (resp *http.Response, err error) {
 	return nil, errors.New("Download error")
 }
 
-//打开远程地址
+//open the url address
 func (self *Phantom) Open(openArgs ...string) (stdout io.ReadCloser, err error) {
 	cmd := exec.Command(self.phantomjsPath, openArgs...)
 	stdout, err = cmd.StdoutPipe()
@@ -148,7 +146,7 @@ func (self *Phantom) Open(openArgs ...string) (stdout io.ReadCloser, err error) 
 	return stdout, err
 }
 
-//动态执行js
+//exec javascript
 func (self *Phantom) Exec(js string, args ...string) (stdout io.ReadCloser, err error) {
 	file, _ := os.Create(DIY_JS_FILE_NAME)
 	file.WriteString(js)
@@ -168,7 +166,7 @@ func (self *Phantom) Exec(js string, args ...string) (stdout io.ReadCloser, err 
 
 }
 
-//设置本地代理客户端
+//SetUserAgent for example [chrome,firefox,IE..]
 func (self *Phantom) SetUserAgent(userAgent string) {
 	self.userAgent = userAgent
 }
@@ -188,17 +186,19 @@ func (self *Phantom) SetProxyAuth(proxyAuth string) {
 	self.proxyAuth = proxyAuth
 }
 
-//设置页面编码
+//set web page decode for example [utf-8|gbk]
 func (self *Phantom) SetPageEncode(pageEncode string) {
 	self.pageEncode = pageEncode
 }
 
 // 动态修改执行文件的Phantomjs.exe路径
+// set the phantomjs exec file
 func (self *Phantom) SetPhantomjsPath(name string, filepath string) {
 	self.phantomjsPath = filepath
 }
 
 //创建js临时文件
+//creat temp javascript file
 func (self *Phantom) CreatJsFile(jsfile string) {
 	if jsfile == "GET" {
 		js := getJs
@@ -213,6 +213,7 @@ func (self *Phantom) CreatJsFile(jsfile string) {
 }
 
 //判断js临时文件是否存在
+//Is js file exist
 func (self *Phantom) Exist(filename string) bool {
 	_, err := os.Stat(filename)
 	return err == nil || os.IsExist(err)

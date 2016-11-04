@@ -6,6 +6,7 @@ import (
 )
 
 //供内部调用
+//interior interface
 type Request interface {
 	GetMethod() string
 	GetUrl() string
@@ -20,16 +21,17 @@ type Request interface {
 }
 
 //供外部调用
+//external interface
 type Param struct {
 	Method        string
 	Url           string
 	Header        http.Header
 	PostBody      string
-	RedirectTimes int           //重定向次数
-	DialTimeout   time.Duration //拨号超时时间段
-	ConnTimeout   time.Duration //链接超时时间
-	RetryPause    time.Duration //请求失败时重复试时间段
-	TryTimes      int           //请求失败重新请求次数
+	RedirectTimes int //request redirect times allow 重定向次数
+	DialTimeout   time.Duration
+	ConnTimeout   time.Duration
+	RetryPause    time.Duration //if request failed,retry time
+	TryTimes      int           //if request failed,retry times
 	UsePhantomJS  bool
 }
 

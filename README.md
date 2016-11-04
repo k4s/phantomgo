@@ -1,9 +1,8 @@
 # phantomgo
-a headless browser phantomjs for golang
+### a headless browser phantomjs for golang
 
-全新的框架,更容易使用,更容易嵌套到自己的下载器
-eg:[http://www.github.com/k4s/webrowser](http://www.github.com/k4s/webrowser)
-```
+### it is easy to use for you web download, eg: [http://www.github.com/k4s/webrowser](http://www.github.com/k4s/webrowser)
+```go
 import (
 	"fmt"
 	"io/ioutil"
@@ -14,7 +13,7 @@ import (
 
 func main() {
 	p := &Param{
-		Method: "POST",  //有POST，GET方法
+		Method: "POST",  //POST or GET ..
 		Url:    "http://localhost/go_test/1.php",
 		Header:       http.Header{"Cookie": []string{"your cookies"}},
 		UsePhantomJS: true,
@@ -30,8 +29,8 @@ func main() {
 }
 
 ```
-可动态执行phantomjs提供的JavaScript接口
-```
+### make the phantomjs yourself to the phantomjs javaScript interface:
+```go
 package main
 
 import (
@@ -54,13 +53,11 @@ func main() {
 }
 
 ```
-
-模拟登录，新浪微博轻松抓数据
+### a example simulate login by cookies, so you can get web data login after:
 ```
 package main
 
 import (
-	//	"time"
 	"fmt"
 	"github.com/k4s/phantomgo"
 	"io/ioutil"
@@ -77,20 +74,20 @@ page.settings.userAgent = 'Mozilla/5.0+(compatible;+Baiduspider/2.0;++http://www
 phantom.cookiesEnabled = true;
 
 phantom.addCookie({
-  'name'     : 'Apache(换成自己的)',
-  'value'    : '63354989(换成自己的)',
+  'name'     : 'Apache(do yourself)',
+  'value'    : '63354989(do yourself)',
   'domain'     :'.weibo.com'});
 phantom.addCookie({
-  'name'     : 'SINAGLOBAL(换成自己的)',
-  'value'    : '8156705307(换成自己的)',
+  'name'     : 'SINAGLOBAL(do yourself)',
+  'value'    : '8156705307(do yourself)',
   'domain'     :'.weibo.com'});
 phantom.addCookie({
-  'name'     : 'SUB(换成自己的)',
-  'value'    : '_2A257NF5qDeTxGeNK6VUT8izMzjmIHXVY12Ii(换成自己的)',
+  'name'     : 'SUB(do yourself)',
+  'value'    : '_2A257NF5qDeTxGeNK6VUT8izMzjmIHXVY12Ii(do yourself)',
   'domain'     :'.weibo.com'});
 phantom.addCookie({
-  'name'     : 'SUBP(换成自己的)',
-  'value'    : '0033WrSXqPxfM725Ws9jqgMF55529P9D9WhnL77(换成自己的)',
+  'name'     : 'SUBP(do yourself)',
+  'value'    : '0033WrSXqPxfM725Ws9jqgMF55529P9D9WhnL77(do yourself)',
   'domain'     :'.weibo.com'});
 if (system.args.length === 1) {
   phantom.exit(1);
