@@ -55,7 +55,7 @@ func NewPhantom() Phantomer {
 	phantom := &Phantom{
 		userAgent:     "Mozilla/5.0+(compatible;+Baiduspider/2.0;++http://www.baidu.com/search/spider.html)",
 		pageEncode:    "utf-8",
-		phantomjsPath: GOPATH + "/src/github.com/k4s/phantomgo/phantomjs/phantomjs",
+		phantomjsPath: "phantomjs",
 	}
 	//if the javascript file is no exist,creat it
 	if !phantom.Exist(GET_JS_FILE_NAME) {
